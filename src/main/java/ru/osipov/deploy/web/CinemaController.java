@@ -27,15 +27,17 @@ public class CinemaController {
     //GET: /v1/cinemas
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     public List<CinemaInfo> getAll(){
+        logger.info("/v1/cinemas");
         logger.info("Get all cinemas");
         return  cinemaService.getAllCinemas();
     }
 
     //GET: /v1/cinemas/country/{country}
-    //if no any parameter was specified -> getAll() [v1/cinemas/country/]
+    //if no any parameter was specified -> getAll() [GET: v1/cinemas/country/]
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE, path={"/country/{country}","/country/"})
     public List<CinemaInfo> cinemasCountry(@PathVariable(required = false,name = "country") String country){
         List<CinemaInfo> result;
+        logger.info("/v1/cinemas/country/");
         if(country == null){
             logger.info("Country is null. Return all cinemas.");
             result = cinemaService.getAllCinemas();
@@ -49,10 +51,11 @@ public class CinemaController {
     }
 
     //GET: v1/cinemas/city/{city}
-    //if no any parameter was specified -> getAll() [v1/cinemas/city/]
+    //if no any parameter was specified -> getAll() [GET: v1/cinemas/city/]
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE, path= {"/city/{city}","/city/"})
     public List<CinemaInfo> cinemasCity(@PathVariable(required = false,name = "city") String city){
         List<CinemaInfo> result;
+        logger.info("/v1/cinemas/city/");
         if(city == null || city.equals("")){
             logger.info("City is null");
             result = cinemaService.getAllCinemas();
@@ -66,11 +69,12 @@ public class CinemaController {
     }
 
     //GET: /v1/cinemas/region/{region}
-    //if all parameter was specified AND region is null -> getAll() [v1/cinemas/region/?all=true]
-    //if region is null but not any parameter was specified -> getByRegion("") [/v1/cinemas/region/]
+    //if all parameter was specified AND region is null -> getAll() [GET: v1/cinemas/region/?all=true]
+    //if region is null but not any parameter was specified -> getByRegion("") [GET: /v1/cinemas/region/]
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE, path={"/region/{region}","/region/"})
     public List<CinemaInfo> cinemasRegion(@PathVariable(required = false,name="region") String region, @RequestParam(required = false, defaultValue = "false") Boolean all){
         List<CinemaInfo> result;
+        logger.info("/v1/cinemas/region/");
         if(region == null && all){
             logger.info("Region is null but fetch all, cause p_all = '{}'",all);
             result = cinemaService.getAllCinemas();
@@ -89,10 +93,11 @@ public class CinemaController {
     }
 
     //GET: /v1/cinemas/street/{street}
-    //if no any parameter was specified -> getAll() [v1/cinemas/street/]
+    //if no any parameter was specified -> getAll() [GET: v1/cinemas/street/]
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE, path={"/street/{street}","/street/"})
     public List<CinemaInfo> cinemasStreet(@PathVariable(required = false,name="street") String street){
         List<CinemaInfo> result;
+        logger.info("/v1/cinemas/street/");
         if(street == null){
             logger.info("Street is null.");
             result = cinemaService.getAllCinemas();
@@ -107,10 +112,11 @@ public class CinemaController {
 
 
     //GET: /v1/cinemas/
-    //if no any parameter was specified -> getAll() [v1/cinemas/]
+    //if no any parameter was specified -> getAll() [GET: v1/cinemas/]
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE, path={"/{name}","/"})
     public List<CinemaInfo> cinema(@PathVariable(required = false,name = "name") String name){
         List<CinemaInfo> result;
+        logger.info("/v1/cinemas/");
         if(name == null){
             logger.info("Name is null.");
             result = cinemaService.getAllCinemas();

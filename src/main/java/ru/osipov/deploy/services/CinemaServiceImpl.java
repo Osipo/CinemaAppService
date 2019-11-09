@@ -27,6 +27,7 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Nonnull
     @Override
+    @Transactional(readOnly = true)
     public List<CinemaInfo> getAllCinemas() {
         logger.info("Get all cinemas");
         return rep.findAll().stream().map(this::buildModel).collect(Collectors.toList());
@@ -34,6 +35,7 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Nonnull
     @Override
+    @Transactional(readOnly = true)
     public CinemaInfo getByName(String ciName) {
         logger.info("Get one cinema by name = '{}'",ciName);
         return rep.findByCname(ciName).map(this::buildModel).orElse(new CinemaInfo(-1l,"","","","",""));
@@ -41,6 +43,7 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Nonnull
     @Override
+    @Transactional(readOnly = true)
     public List<CinemaInfo> getByCountry(String country) {
         logger.info("Get cinemas by country = '{}'",country);
         return rep.findByCountry(country).stream().map(this::buildModel).collect(Collectors.toList());
@@ -48,6 +51,7 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Nonnull
     @Override
+    @Transactional(readOnly = true)
     public List<CinemaInfo> getByRegion(String region) {
         logger.info("Get cinemas by region = '{}'",region);
         return rep.findByRegion(region).stream().map(this::buildModel).collect(Collectors.toList());
@@ -55,6 +59,7 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Nonnull
     @Override
+    @Transactional(readOnly = true)
     public List<CinemaInfo> getByCity(String city) {
         logger.info("Get cinemas by city = '{}'",city);
         return rep.findByCity(city).stream().map(this::buildModel).collect(Collectors.toList());
@@ -62,6 +67,7 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Nonnull
     @Override
+    @Transactional(readOnly = true)
     public List<CinemaInfo> getByStreet(String street) {
         logger.info("Get cinemas by street = '{}'",street);
         return rep.findByStreet(street).stream().map(this::buildModel).collect(Collectors.toList());

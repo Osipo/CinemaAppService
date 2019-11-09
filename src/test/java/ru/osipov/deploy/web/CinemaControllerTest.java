@@ -173,11 +173,30 @@ public class CinemaControllerTest {
                 .andExpect(jsonPath("$[1].region").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$[1].street").value(PARAMS3[4]));
 
+        mockMvc.perform(get("/v1/cinemas/region/?all").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].id").value(99l))
+                .andExpect(jsonPath("$[0].name").value(PARAMS4[0]))
+                .andExpect(jsonPath("$[0].country").value(PARAMS4[1]))
+                .andExpect(jsonPath("$[0].city").value(PARAMS4[2]))
+                .andExpect(jsonPath("$[0].region").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$[0].street").value(PARAMS4[4]))
+                .andExpect(jsonPath("$[1].id").value(999l))
+                .andExpect(jsonPath("$[1].name").value(PARAMS3[0]))
+                .andExpect(jsonPath("$[1].country").value(PARAMS3[1]))
+                .andExpect(jsonPath("$[1].city").value(PARAMS3[2]))
+                .andExpect(jsonPath("$[1].region").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$[1].street").value(PARAMS3[4]));
+
         mockMvc.perform(get("/v1/cinemas/region/?all=true").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$").isEmpty());
+
+
 
         mockMvc.perform(get("/v1/cinemas/region/Moscovskyi").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
