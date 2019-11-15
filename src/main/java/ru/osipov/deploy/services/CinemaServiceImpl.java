@@ -6,10 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.osipov.deploy.entities.Cinema;
 import ru.osipov.deploy.models.CinemaInfo;
+import ru.osipov.deploy.models.CreateCinema;
 import ru.osipov.deploy.repositories.CinemaRepository;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -31,6 +33,22 @@ public class CinemaServiceImpl implements CinemaService {
     public List<CinemaInfo> getAllCinemas() {
         logger.info("Get all cinemas");
         return rep.findAll().stream().map(this::buildModel).collect(Collectors.toList());
+    }
+
+    @Nonnull
+    @Override
+    @Transactional(readOnly = true)
+    public CinemaInfo getCinemaById(Long id) {
+        logger.info("Get cinema by id = '{}'",id);
+        Optional<Cinema> o = rep.findByCid(id);
+        if(o.isPresent()){
+            logger.info("Film was found. Return object.");
+            return buildModel(o.get());
+        }
+        else{
+            logger.info("Film was not found. Throw exception...");
+            throw new IllegalStateException("Film was not found.");
+        }
     }
 
     @Nonnull
@@ -71,6 +89,30 @@ public class CinemaServiceImpl implements CinemaService {
     public List<CinemaInfo> getByStreet(String street) {
         logger.info("Get cinemas by street = '{}'",street);
         return rep.findByStreet(street).stream().map(this::buildModel).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public CinemaInfo updateCinema(Long id, CreateCinema data) {
+        logger.info("Update cinema with id = '{}'",id);
+        Optional<Cinema> o = rep.findByCid(id);
+        if(o.isPresent()){
+            Cinema c = o.get();
+            logger.info("Found successful.");
+            c.setCname(data.getName());
+            c.setCountry(data.getCountry());
+            c.setCity(data.getCity());
+            c.setRegion(data.getRegion());
+            c.setStreet(data.getStreet());
+            logger.info("New data was set.");
+            rep.save(c);
+            logger.info("Successful saved.");
+            return buildModel(c);
+        }
+        else{
+            logger.info("Cinema with id '{}' was not found.",id);
+            throw new IllegalStateException("Cinema with id"+id+" was not found.");
+        }
     }
 
     @Nonnull

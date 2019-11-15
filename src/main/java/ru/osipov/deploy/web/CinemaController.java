@@ -3,10 +3,13 @@ package ru.osipov.deploy.web;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.osipov.deploy.models.CinemaInfo;
+import ru.osipov.deploy.models.CreateCinema;
 import ru.osipov.deploy.services.CinemaService;
 
+import javax.validation.Valid;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,6 +28,7 @@ public class CinemaController {
     }
 
     //GET: /v1/cinemas
+    //GET: /v1/cinemas/
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     public List<CinemaInfo> getAll(){
         logger.info("/v1/cinemas");
@@ -56,7 +60,7 @@ public class CinemaController {
     public List<CinemaInfo> cinemasCity(@PathVariable(required = false,name = "city") String city){
         List<CinemaInfo> result;
         logger.info("/v1/cinemas/city/");
-        if(city == null || city.equals("")){
+        if(city == null){
             logger.info("City is null");
             result = cinemaService.getAllCinemas();
             return result;
@@ -111,10 +115,10 @@ public class CinemaController {
     }
 
 
-    //GET: /v1/cinemas/
-    //if no any parameter was specified -> getAll() [GET: v1/cinemas/]
-    @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE, path={"/{name}","/"})
-    public List<CinemaInfo> cinema(@PathVariable(required = false,name = "name") String name){
+    //GET: /v1/cinemas/name/{cinema_name}
+    //if no any parameter was specified -> badRequest()
+    @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE, path={"/name/{name}"})
+    public List<CinemaInfo> cinema(@PathVariable(required = true,name = "name") String name){
         List<CinemaInfo> result;
         logger.info("/v1/cinemas/");
         if(name == null){
@@ -128,5 +132,37 @@ public class CinemaController {
             result.add(cinemaService.getByName(name));
             return result;
         }
+    }
+
+    //GET: /v1/cinemas/{id}
+    @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE, path={"/{id}"})
+    public ResponseEntity getById(@PathVariable(name = "id",required = true) Long id){
+        logger.info("getById");
+        logger.info("/v1/cinemas/'{}'",id);
+        CinemaInfo c = null;
+        try{
+            c = cinemaService.getCinemaById(id);
+        }
+        catch (IllegalStateException e){
+            logger.info("not found. 404");
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+        return ResponseEntity.ok(c);
+    }
+
+    @PatchMapping(consumes = APPLICATION_JSON_UTF8_VALUE,produces = APPLICATION_JSON_UTF8_VALUE, path = {"/{id}"})
+    public ResponseEntity updateCinema(@PathVariable(required = true, name = "id") Long id, @RequestBody @Valid CreateCinema request){
+        CinemaInfo c;
+        logger.info("updateCinema");
+        logger.info("/v1/cinemas/'{}'",id);
+        try{
+            logger.info("Id = '{}'",id);
+            c = cinemaService.updateCinema(id,request);
+        }
+        catch (IllegalStateException e){
+            logger.info("not found. 404");
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+        return ResponseEntity.ok(c);
     }
 }
